@@ -62,7 +62,7 @@ function Navbar() {
       className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-md py-3 font-press mt-4 text-sm"
       onClick={() => navigate("/home")}
     >
-      All Courses >
+      All Courses 
     </button>
               </div>
             </div>
@@ -154,9 +154,16 @@ function Navbar() {
 
         {/* Courses Link */}
         <a href="#" className="hover:text-[#00FF7F] transition-colors font-jaini text-3xl">Courses</a>
-      </div>
 
-      {/* Login & Get Started Buttons */}
+        <a 
+          onClick={() => navigate("/stake-token")} 
+          className="hover:text-[#00FF7F] transition-colors font-jaini text-3xl cursor-pointer"
+        >
+          Stake-Token
+        </a>
+        </div>
+
+        {/* Login & Get Started Buttons */}
       <div className="hidden md:flex items-center gap-6">
       <button 
         href="/login" 

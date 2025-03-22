@@ -10,6 +10,7 @@ import Home from './components/Home';
 import M1 from "./components/M1";
 import M2 from "./components/M2";
 import Cart from "./components/Cart";
+import StakeToken from './components/stakeTokoen';
 
 // AI Agent Component
 function AIAgent() {
@@ -59,6 +60,7 @@ function App() {
         <Route path="/m2" element={<M2 />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/ai-agent" element={<AIAgent />} /> {/* New route for AI Agent */}
+        <Route path="/stake-token" element={<StakeToken />} />
       </Routes>
     </Router>
   );
