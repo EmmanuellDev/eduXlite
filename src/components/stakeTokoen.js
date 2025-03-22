@@ -2,26 +2,31 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import detectEthereumProvider from '@metamask/detect-provider';
 
-// Staking Token ABI (already includes stake function)
+// Staking Token ABI
 const stakingTokenABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function approve(address spender, uint256 amount) returns (bool)",
-  "function allowance(address owner, address spender) view returns (uint256)",
+  "function allowance(address owner, address spender) view returns (uint256)"
+];
+
+// StakeDapp ABI
+const stakeDappABI = [
   "function stake(uint256 amount)"
 ];
 
 const STAKING_TOKEN_ADDRESS = "0x2b135a08c50e8871C6a8932B74d8cD0325e44D9b";
+const STAKE_DAPP_ADDRESS = "0x8755B5bFfC86dFabB8B15148074d05C411Aad1b6";
 
 const StakeToken = ({ onBalanceUpdate }) => {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [stakingToken, setStakingToken] = useState(null);
+  const [stakeDapp, setStakeDapp] = useState(null);
   const [amountToApprove, setAmountToApprove] = useState('');
   const [tokenBalance, setTokenBalance] = useState('0');
+  const [allowance, setAllowance] = useState('0'); // State to track allowance
   const [error, setError] = useState(null);
-
-  const STAKE_DAPP_ADDRESS = "0x8755B5bFfC86dFabB8B15148074d05C411Aad1b6";
 
   // Connect to MetaMask
   const connectWallet = async () => {
@@ -54,8 +59,13 @@ const StakeToken = ({ onBalanceUpdate }) => {
       const stakingTokenContract = new ethers.Contract(STAKING_TOKEN_ADDRESS, stakingTokenABI, signer);
       setStakingToken(stakingTokenContract);
 
-      // Fetch balance after connecting
+      // Initialize StakeDapp contract
+      const stakeDappContract = new ethers.Contract(STAKE_DAPP_ADDRESS, stakeDappABI, signer);
+      setStakeDapp(stakeDappContract);
+
+      // Fetch balance and allowance after connecting
       fetchBalance(userAddress, stakingTokenContract);
+      fetchAllowance(userAddress, stakingTokenContract);
     } catch (err) {
       setError("Unexpected error during wallet connection. Check console for details.");
       console.error("Wallet connection error:", err);
@@ -79,6 +89,20 @@ const StakeToken = ({ onBalanceUpdate }) => {
     }
   };
 
+  // Fetch allowance
+  const fetchAllowance = async (userAccount, stakingTokenContract) => {
+    try {
+      if (stakingTokenContract && userAccount) {
+        const allowance = await stakingTokenContract.allowance(userAccount, STAKE_DAPP_ADDRESS);
+        const formattedAllowance = ethers.utils.formatEther(allowance);
+        setAllowance(formattedAllowance);
+      }
+    } catch (err) {
+      setError("Failed to fetch allowance. Check console for details.");
+      console.error("Allowance fetch error:", err);
+    }
+  };
+
   // Approve tokens
   const handleApprove = async () => {
     if (!stakingToken || !account) {
@@ -91,19 +115,21 @@ const StakeToken = ({ onBalanceUpdate }) => {
     }
     try {
       setError(null);
-      const tx = await stakingToken.approve(STAKE_DAPP_ADDRESS, ethers.utils.parseEther(amountToApprove));
+      const amountToApproveWei = ethers.utils.parseEther(amountToApprove);
+      const tx = await stakingToken.approve(STAKE_DAPP_ADDRESS, amountToApproveWei);
       await tx.wait();
       alert("Approval successful!");
       fetchBalance(account, stakingToken);
+      fetchAllowance(account, stakingToken); // Refresh allowance after approval
     } catch (err) {
-      setError("Approval failed. Check console for details.");
+      setError("Approval failed: " + (err.reason || err.message));
       console.error("Approval error:", err);
     }
   };
 
   // Stake tokens
   const handleStake = async () => {
-    if (!stakingToken || !account) {
+    if (!stakeDapp || !account) {
       setError("Connect wallet first!");
       return;
     }
@@ -114,12 +140,35 @@ const StakeToken = ({ onBalanceUpdate }) => {
     try {
       setError(null);
       const amountToStake = ethers.utils.parseEther(amountToApprove);
-      const tx = await stakingToken.stake(amountToStake);
+
+      // Check balance
+      const balanceWei = ethers.utils.parseEther(tokenBalance);
+      if (amountToStake.gt(balanceWei)) {
+        setError("Insufficient balance to stake this amount!");
+        return;
+      }
+
+      // Check allowance
+      const allowanceWei = ethers.utils.parseEther(allowance);
+      if (amountToStake.gt(allowanceWei)) {
+        setError("Insufficient allowance. Please approve more tokens.");
+        return;
+      }
+
+      // Attempt to stake with a manual gas limit
+      const tx = await stakeDapp.stake(amountToStake, { gasLimit: 300000 });
       await tx.wait();
       alert("Staking successful!");
       fetchBalance(account, stakingToken); // Refresh balance after staking
+      fetchAllowance(account, stakingToken); // Refresh allowance after staking
     } catch (err) {
-      setError("Staking failed. Check console for details.");
+      if (err.code === "UNPREDICTABLE_GAS_LIMIT") {
+        setError("Gas estimation failed: " + (err.reason || "Try increasing the gas limit or check contract logic."));
+      } else if (err.reason) {
+        setError("Staking failed: " + err.reason);
+      } else {
+        setError("Staking failed: " + err.message);
+      }
       console.error("Staking error:", err);
     }
   };
@@ -134,6 +183,7 @@ const StakeToken = ({ onBalanceUpdate }) => {
         <>
           <p>Account: {account}</p>
           <p>Balance: {tokenBalance} STK</p>
+          <p>Allowance for StakeDapp: {allowance} STK</p>
           <input
             type="text"
             placeholder="Amount to approve/stake"
