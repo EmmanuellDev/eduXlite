@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Code2, ChevronDown } from 'lucide-react';
-import "./Home.css";
+import "./Main.css";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
@@ -28,7 +28,7 @@ function Navbar() {
       <div className="relative">
         <button 
           onClick={() => toggleMenu('learn')} 
-          className="px-4 py-2 rounded-md hover:text-[#00FF7F] font-jaini text-2xl flex items-center gap-1 transition-colors"
+          className="px-4 py-2 rounded-md hover:text-[#00FF7F] font-jaini text-3xl flex items-center gap-1 transition-colors"
         >
           Learn <ChevronDown className="w-4 h-4" />
         </button>
@@ -36,7 +36,7 @@ function Navbar() {
         {openMenu === 'learn' && (
           <div className="z-20 absolute left-0 mt-2 p-6 w-[900px] bg-[#020817] shadow-xl rounded-xl border border-gray-800 grid grid-cols-4 gap-8">
             <div>
-              <h3 className="text-gray-400 font-medium mb-4">RECOMMENDED</h3>
+              <h3 className="text-gray-400 font-medium mb-4 font-regular">RECOMMENDED</h3>
               <div className="space-y-12 min-w-[16rem]">
                 <div className="flex gap-3">
                   <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=64&h=64&fit=crop&auto=format" 
@@ -58,16 +58,19 @@ function Navbar() {
                     <p className="text-sm text-gray-400 font-jaini">Create your first website with HTML, the building block of the web.</p>
                   </div>
                 </div>
-                <button className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-md py-3 font-press mt-4 text-sm">
-                  All Courses >
-                </button>
+                <button
+      className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-md py-3 font-press mt-4 text-sm"
+      onClick={() => navigate("/home")}
+    >
+      All Courses >
+    </button>
               </div>
             </div>
 
             <div className='pl-12'>
               <h3 className="text-gray-400 font-medium mb-4 font-regular">DATA SCIENCE</h3>
               <div className="space-y-2">
-                <a href="#" className="block text-gray-300 font-regular hover:text-[#00FF7F]">Python</a>
+                <a href="#" className="block text-gray-300 hover:text-[#00FF7F] font-regular">Python</a>
                 <a href="#" className="block text-gray-300 hover:text-[#00FF7F] font-regular">Intermediate Python</a>
                 <a href="#" className="block text-gray-300 hover:text-[#00FF7F] font-regular">NumPy</a>
                 <a href="#" className="block text-gray-300 hover:text-[#00FF7F] font-regular">SQL</a>
@@ -119,7 +122,7 @@ function Navbar() {
 
         {/* Practice Dropdown */}
         <div className="relative">
-          <button onClick={() => toggleMenu('practice')} className="hover:text-[#00FF7F] font-jaini text-2xl flex items-center gap-1 transition-colors">
+          <button onClick={() => toggleMenu('practice')} className="hover:text-[#00FF7F] font-jaini text-3xl flex items-center gap-1 transition-colors">
             Practice <ChevronDown className="w-4 h-4" />
           </button>
           {openMenu === 'practice' && (
@@ -132,11 +135,11 @@ function Navbar() {
         </div>
 
         {/* Build Link */}
-        <a href="#" className="hover:text-[#00FF7F] transition-colors font-jaini text-2xl">Build</a>
+        <a href="#" className="hover:text-[#00FF7F] transition-colors font-jaini text-3xl">Build</a>
 
         {/* Community Dropdown */}
         <div className="relative">
-          <button onClick={() => toggleMenu('community')} className="font-jaini text-2xl hover:text-[#00FF7F] flex items-center gap-1 transition-colors">
+          <button onClick={() => toggleMenu('community')} className="font-jaini text-3xl hover:text-[#00FF7F] flex items-center gap-1 transition-colors">
             Community <ChevronDown className="w-4 h-4" />
           </button>
           {openMenu === 'community' && (
@@ -150,7 +153,7 @@ function Navbar() {
         </div>
 
         {/* Courses Link */}
-        <a href="#" className="hover:text-[#00FF7F] transition-colors font-jaini text-2xl">Courses</a>
+        <a href="#" className="hover:text-[#00FF7F] transition-colors font-jaini text-3xl">Courses</a>
       </div>
 
       {/* Login & Get Started Buttons */}
