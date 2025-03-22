@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+}
+
+.pixel-button {
+  @apply bg-yellow-400 text-black font-['Press_Start_2P'] px-8 py-4 rounded-lg 
+  hover:bg-yellow-300 transition-colors duration-200 shadow-lg 
+  border-b-4 border-yellow-600;
+}
+
+.pixel-text {
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
