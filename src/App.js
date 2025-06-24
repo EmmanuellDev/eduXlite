@@ -12,6 +12,7 @@ import M2 from "./components/M2";
 import Cart from "./components/Cart";
 import StakeToken from './components/stakeTokoen';
 
+
 // AI Agent Component
 function AIAgent() {
   useEffect(() => {
