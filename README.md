@@ -60,5 +60,5 @@ npm start
 🛠️ Lightweight & Fast – Easy to deploy and use anywhere.
 
 # 📜 License
-© 2025 Forti File. All rights reserved. Designed by Emmanuel Ramamoorthy.
+© 2025 EduXLite. All rights reserved. Designed by Emmanuel Ramamoorthy.
 For support or contributions, contact emmanuelsk04@gmail.com or open an issue on GitHub.
